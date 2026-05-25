@@ -125,7 +125,7 @@ function App() {
   // Check if user is visiting from the old domain
   useEffect(() => {
     const currentDomain = window.location.hostname;
-    const isOldDomain = currentDomain === 'pr-reviewer.aswinlocal.in';
+    const isOldDomain = currentDomain === 'pr-reviewer.aswincloud.com';
 
     if (isOldDomain) {
       setShowDomainDeprecationBanner(true);
@@ -1462,7 +1462,7 @@ function App() {
           <div className='banner-message'>
             <span className='banner-icon'>🚨</span>
             <div className='banner-text'>
-              <strong>Domain Migration Notice:</strong> This domain (pr-reviewer.aswinlocal.in) will
+              <strong>Domain Migration Notice:</strong> This domain (pr-reviewer.aswincloud.com) will
               be inactive after <strong>November 2025</strong>. Please update your bookmarks to{' '}
               <strong>pr-reviewer.aswincloud.com</strong>
             </div>
