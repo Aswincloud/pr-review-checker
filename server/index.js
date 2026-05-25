@@ -33,7 +33,7 @@ app.use(express.json());
 // Domain deprecation middleware
 app.use((req, res, next) => {
   const host = req.get('host') || req.hostname;
-  const isOldDomain = host === 'pr-reviewer.aswinlocal.in';
+  const isOldDomain = host === 'pr-reviewer.aswincloud.com';
 
   if (isOldDomain) {
     res.setHeader('X-Domain-Deprecation', 'true');
