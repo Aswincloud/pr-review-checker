@@ -1462,8 +1462,8 @@ function App() {
           <div className='banner-message'>
             <span className='banner-icon'>🚨</span>
             <div className='banner-text'>
-              <strong>Domain Migration Notice:</strong> This domain (pr-reviewer.aswincloud.com) will
-              be inactive after <strong>November 2025</strong>. Please update your bookmarks to{' '}
+              <strong>Domain Migration Notice:</strong> This domain (pr-reviewer.aswincloud.com)
+              will be inactive after <strong>November 2025</strong>. Please update your bookmarks to{' '}
               <strong>pr-reviewer.aswincloud.com</strong>
             </div>
           </div>
