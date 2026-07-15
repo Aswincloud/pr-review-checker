@@ -5,6 +5,8 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  merge_group: {}          # run in the merge queue so the required
+                           # "all-checks-complete" gate is satisfied on the queued commit
 
 env:
   NODE_VERSION_MATRIX: '[18.x, 20.x, 22.x]'
