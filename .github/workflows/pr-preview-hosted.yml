@@ -102,7 +102,7 @@ jobs:
       # Option 2: Deploy to Netlify
       - name: 🚀 Deploy to Netlify
         if: steps.deployment-check.outputs.has_netlify == 'true'
-        uses: nwtgck/actions-netlify@v3.0
+        uses: nwtgck/actions-netlify@v4.0
         with:
           publish-dir: './client/build'
           production-branch: main
