@@ -1,5 +1,5 @@
 # Development Dockerfile for PR Approval Finder
-FROM node:18-alpine
+FROM node:26-alpine
 
 # Install development tools
 RUN apk add --no-cache git
