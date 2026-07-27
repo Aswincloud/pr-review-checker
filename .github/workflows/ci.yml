@@ -18,7 +18,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     
     - name: Use Node.js 18.x
       uses: actions/setup-node@v7
@@ -47,7 +47,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
     
@@ -105,7 +105,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     
     - name: Use Node.js 18.x
       uses: actions/setup-node@v7
@@ -144,7 +144,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v7
@@ -206,7 +206,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     
     - name: Validate CODEOWNERS
       run: |
@@ -226,7 +226,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     
     - name: Check PR title
       run: |
@@ -368,7 +368,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     
     - name: Use Node.js 18.x
       uses: actions/setup-node@v7
