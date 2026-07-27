@@ -19,7 +19,7 @@
     "codeowners": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.6.0",
-    "express": "^4.21.2",
+    "express": "^5.2.1",
     "minimatch": "^10.0.3",
     "nodemailer": "^6.10.1"
   },
