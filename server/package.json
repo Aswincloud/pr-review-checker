@@ -24,7 +24,7 @@
     "nodemailer": "^6.10.1"
   },
   "devDependencies": {
-    "eslint": "^8.57.1",
+    "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
     "jest": "^30.0.3",
