@@ -15,7 +15,7 @@
     "code:fix": "npm run lint:fix && npm run format"
   },
   "dependencies": {
-    "axios": "^1.4.0",
+    "axios": "^1.18.0",
     "codeowners": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
