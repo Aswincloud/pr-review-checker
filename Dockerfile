@@ -1,6 +1,6 @@
 # Multi-stage build for PR Approval Finder
 # Build stage
-FROM node:18-alpine AS builder
+FROM node:26-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -22,7 +22,7 @@ COPY . .
 RUN cd client && npm run build
 
 # Production stage
-FROM node:18-alpine AS production
+FROM node:26-alpine AS production
 
 # Add non-root user
 RUN addgroup -g 1001 -S nodejs && \
