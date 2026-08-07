@@ -21,7 +21,7 @@
     "dotenv": "^17.4.2",
     "express": "^4.21.2",
     "minimatch": "^10.0.3",
-    "nodemailer": "^6.10.1"
+    "nodemailer": "^9.0.1"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
