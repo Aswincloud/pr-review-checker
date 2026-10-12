@@ -64,6 +64,15 @@ describe('PR Approval Server', () => {
       expect(response.body.error).toContain('Invalid GitHub PR URL format');
     });
 
+    test('should reject URLs that only contain github.com in the path', async () => {
+      const response = await request(app)
+        .post('/api/pr-approvers')
+        .send({ prUrl: 'https://example.com/github.com/owner/repo/pull/123' });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toContain('Invalid GitHub PR URL format');
+    });
+
     test('should accept valid GitHub PR URL format', async () => {
       // Mock successful GitHub API responses
       const mockPRData = {

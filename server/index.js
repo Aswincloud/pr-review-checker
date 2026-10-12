@@ -875,6 +875,31 @@ function getTokenForOperation(userToken, operation = 'repo') {
   return GITHUB_TOKEN;
 }
 
+function parseGitHubPrUrl(prUrl) {
+  if (typeof prUrl !== 'string') {
+    return null;
+  }
+
+  try {
+    const url = new URL(prUrl);
+    const pathMatch = url.pathname.match(
+      /^\/([A-Za-z0-9](?:[A-Za-z0-9._-]{0,99}))\/([A-Za-z0-9](?:[A-Za-z0-9._-]{0,99}))\/pull\/([1-9]\d*)(?:\/(?:files|commits|checks|conversation|changes))?\/?$/
+    );
+
+    if (url.protocol !== 'https:' || url.hostname !== 'github.com' || !pathMatch) {
+      return null;
+    }
+
+    return {
+      owner: pathMatch[1],
+      repo: pathMatch[2],
+      prNumber: pathMatch[3],
+    };
+  } catch {
+    return null;
+  }
+}
+
 // Get required approvers for a PR
 app.post('/api/pr-approvers', async (req, res) => {
   try {
@@ -884,13 +909,13 @@ app.post('/api/pr-approvers', async (req, res) => {
       return res.status(400).json({ error: 'PR URL is required' });
     }
 
-    // Parse GitHub PR URL
-    const urlMatch = prUrl.match(/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/);
-    if (!urlMatch) {
+    // Parse and validate the GitHub PR URL before using its path components in API requests.
+    const parsedPrUrl = parseGitHubPrUrl(prUrl);
+    if (!parsedPrUrl) {
       return res.status(400).json({ error: 'Invalid GitHub PR URL format' });
     }
 
-    const [, owner, repo, prNumber] = urlMatch;
+    const { owner, repo, prNumber } = parsedPrUrl;
     const token = getTokenForOperation(githubToken);
 
     // Create headers with optional authorization
