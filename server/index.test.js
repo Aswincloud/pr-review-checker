@@ -26,6 +26,14 @@ describe('PR Approval Server', () => {
     });
   });
 
+  describe('Feedback escaping', () => {
+    test('should escape HTML-sensitive feedback characters', () => {
+      expect(app.escapeHtml('<script>alert("x")</script> &')).toBe(
+        '&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt; &amp;'
+      );
+    });
+  });
+
   describe('CORS and Basic Setup', () => {
     test('should have CORS headers', async () => {
       const response = await request(app).get('/health');
@@ -59,6 +67,15 @@ describe('PR Approval Server', () => {
       const response = await request(app)
         .post('/api/pr-approvers')
         .send({ prUrl: 'https://gitlab.com/owner/repo/merge_requests/123' });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toContain('Invalid GitHub PR URL format');
+    });
+
+    test('should reject URLs that only contain github.com in the path', async () => {
+      const response = await request(app)
+        .post('/api/pr-approvers')
+        .send({ prUrl: 'https://example.com/github.com/owner/repo/pull/123' });
 
       expect(response.status).toBe(400);
       expect(response.body.error).toContain('Invalid GitHub PR URL format');

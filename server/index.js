@@ -24,6 +24,19 @@ const PythonCodeownersParser = require('./codeowners-python-bridge');
 const GITHUB_API_BASE = 'https://api.github.com';
 const MATCHED_BY_CODEOWNERS = 'Matched by codeowners library';
 
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, character => {
+    const entities = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    };
+    return entities[character];
+  });
+}
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -409,7 +422,7 @@ app.post('/api/feedback', async (req, res) => {
     const { name, email, type, subject, message, rating } = req.body;
 
     // Validate required fields
-    if (!subject || !message) {
+    if (typeof subject !== 'string' || typeof message !== 'string' || !subject || !message) {
       return res.status(400).json({ error: 'Subject and message are required' });
     }
 
@@ -424,6 +437,15 @@ app.post('/api/feedback', async (req, res) => {
 
     const feedbackId = `feedback_${Date.now()}`;
     const timestamp = new Date().toISOString();
+    const safeType = escapeHtml(type || 'feedback');
+    const safeSubject = escapeHtml(subject);
+    const safeMessage = escapeHtml(message);
+    const safeName = name ? escapeHtml(name) : '';
+    const safeEmail = email ? escapeHtml(email) : '';
+    const safeRating = Number.isInteger(rating) && rating >= 1 && rating <= 5 ? rating : 5;
+    const safeMailSubject = `[PR Approval Finder] ${(type || 'feedback')
+      .toString()
+      .replace(/[\r\n]/g, ' ')}: ${subject.replace(/[\r\n]/g, ' ')}`;
 
     // Log feedback to console
     // // console.log('\n📝 New Feedback Received:');
@@ -450,24 +472,24 @@ app.post('/api/feedback', async (req, res) => {
           <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
             <div style="margin-bottom: 15px;">
               <strong style="color: #374151;">Type:</strong> 
-              <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 6px; margin-left: 8px; text-transform: capitalize;">${type || 'feedback'}</span>
+              <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 6px; margin-left: 8px; text-transform: capitalize;">${safeType}</span>
             </div>
             
             <div style="margin-bottom: 15px;">
               <strong style="color: #374151;">Rating:</strong> 
               <span style="margin-left: 8px; font-size: 18px;">
-                ${'⭐'.repeat(rating || 5)} (${rating || 5}/5)
+                ${'⭐'.repeat(safeRating)} (${safeRating}/5)
               </span>
             </div>
             
             <div style="margin-bottom: 15px;">
               <strong style="color: #374151;">Subject:</strong>
-              <p style="margin: 5px 0 0 0; padding: 10px; background: #f9fafb; border-radius: 6px; border-left: 4px solid #667eea;">${subject}</p>
+              <p style="margin: 5px 0 0 0; padding: 10px; background: #f9fafb; border-radius: 6px; border-left: 4px solid #667eea;">${safeSubject}</p>
             </div>
             
             <div style="margin-bottom: 15px;">
               <strong style="color: #374151;">Message:</strong>
-              <div style="margin: 5px 0 0 0; padding: 15px; background: #f9fafb; border-radius: 6px; border-left: 4px solid #667eea; white-space: pre-wrap; line-height: 1.6;">${message}</div>
+              <div style="margin: 5px 0 0 0; padding: 15px; background: #f9fafb; border-radius: 6px; border-left: 4px solid #667eea; white-space: pre-wrap; line-height: 1.6;">${safeMessage}</div>
             </div>
             
             ${
@@ -475,7 +497,7 @@ app.post('/api/feedback', async (req, res) => {
                 ? `
             <div style="margin-bottom: 15px;">
               <strong style="color: #374151;">Name:</strong> 
-              <span style="margin-left: 8px;">${name}</span>
+                <span style="margin-left: 8px;">${safeName}</span>
             </div>
             `
                 : ''
@@ -486,7 +508,7 @@ app.post('/api/feedback', async (req, res) => {
                 ? `
             <div style="margin-bottom: 15px;">
               <strong style="color: #374151;">Contact Email:</strong> 
-              <a href="mailto:${email}" style="margin-left: 8px; color: #667eea; text-decoration: none;">${email}</a>
+                <a href="mailto:${safeEmail}" style="margin-left: 8px; color: #667eea; text-decoration: none;">${safeEmail}</a>
             </div>
             `
                 : ''
@@ -514,7 +536,7 @@ app.post('/api/feedback', async (req, res) => {
         const mailOptions = {
           from: `"PR Approval Finder" <${process.env.SMTP_USER}>`,
           to: process.env.FEEDBACK_EMAIL,
-          subject: `[PR Approval Finder] ${(type || 'feedback').toUpperCase()}: ${subject}`,
+          subject: safeMailSubject,
           html: emailHtml,
           text: `
 New Feedback Received - PR Approval Finder
@@ -875,6 +897,31 @@ function getTokenForOperation(userToken, operation = 'repo') {
   return GITHUB_TOKEN;
 }
 
+function parseGitHubPrUrl(prUrl) {
+  if (typeof prUrl !== 'string') {
+    return null;
+  }
+
+  try {
+    const url = new URL(prUrl);
+    const pathMatch = url.pathname.match(
+      /^\/([A-Za-z0-9](?:[A-Za-z0-9._-]{0,99}))\/([A-Za-z0-9](?:[A-Za-z0-9._-]{0,99}))\/pull\/([1-9]\d*)(?:\/(?:files|commits|checks|conversation|changes))?\/?$/
+    );
+
+    if (url.protocol !== 'https:' || url.hostname !== 'github.com' || !pathMatch) {
+      return null;
+    }
+
+    return {
+      owner: pathMatch[1],
+      repo: pathMatch[2],
+      prNumber: pathMatch[3],
+    };
+  } catch {
+    return null;
+  }
+}
+
 // Get required approvers for a PR
 app.post('/api/pr-approvers', async (req, res) => {
   try {
@@ -884,13 +931,13 @@ app.post('/api/pr-approvers', async (req, res) => {
       return res.status(400).json({ error: 'PR URL is required' });
     }
 
-    // Parse GitHub PR URL
-    const urlMatch = prUrl.match(/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/);
-    if (!urlMatch) {
+    // Parse and validate the GitHub PR URL before using its path components in API requests.
+    const parsedPrUrl = parseGitHubPrUrl(prUrl);
+    if (!parsedPrUrl) {
       return res.status(400).json({ error: 'Invalid GitHub PR URL format' });
     }
 
-    const [, owner, repo, prNumber] = urlMatch;
+    const { owner, repo, prNumber } = parsedPrUrl;
     const token = getTokenForOperation(githubToken);
 
     // Create headers with optional authorization
@@ -1635,3 +1682,4 @@ if (require.main === module) {
 
 module.exports = app;
 module.exports.cleanup = cleanup;
+module.exports.escapeHtml = escapeHtml;

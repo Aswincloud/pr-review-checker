@@ -18,10 +18,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
     
     - name: Use Node.js 18.x
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
       with:
         node-version: 18.x
         cache: 'npm'
@@ -47,12 +47,12 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       with:
         fetch-depth: 0
     
     - name: Use Node.js 18.x
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
       with:
         node-version: 18.x
         cache: 'npm'
@@ -74,7 +74,7 @@ jobs:
     
     - name: Run TruffleHog OSS (PR)
       if: github.event_name == 'pull_request'
-      uses: trufflesecurity/trufflehog@main
+      uses: trufflesecurity/trufflehog@466da5b0bb161144f6afca9afe5d57975828c410
       with:
         path: ./
         base: ${{ github.event.pull_request.base.sha }}
@@ -83,21 +83,19 @@ jobs:
     
     - name: Run TruffleHog OSS (Push)
       if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
-      uses: trufflesecurity/trufflehog@main
+      uses: trufflesecurity/trufflehog@466da5b0bb161144f6afca9afe5d57975828c410
       with:
         path: ./
         base: ${{ github.event.before }}
         head: ${{ github.event.after }}
         extra_args: --debug --only-verified
-      continue-on-error: true
     
     - name: Run TruffleHog OSS (Full Scan)
       if: github.event_name == 'push' && github.event.before == '0000000000000000000000000000000000000000'
-      uses: trufflesecurity/trufflehog@main
+      uses: trufflesecurity/trufflehog@466da5b0bb161144f6afca9afe5d57975828c410
       with:
         path: ./
         extra_args: --debug --only-verified
-      continue-on-error: true
 
   # Dependency analysis
   dependency-analysis:
@@ -105,10 +103,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
     
     - name: Use Node.js 18.x
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
       with:
         node-version: 18.x
         cache: 'npm'
@@ -144,10 +142,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
     
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
@@ -206,7 +204,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
     
     - name: Validate CODEOWNERS
       run: |
@@ -226,7 +224,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
     
     - name: Check PR title
       run: |
@@ -368,10 +366,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
     
     - name: Use Node.js 18.x
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
       with:
         node-version: 18.x
         cache: 'npm'

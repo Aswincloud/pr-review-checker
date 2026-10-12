@@ -20,10 +20,10 @@ jobs:
     
     steps:
       - name: 📥 Checkout Code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       - name: 📦 Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: '20'
           cache: 'npm'
@@ -102,7 +102,7 @@ jobs:
       # Option 2: Deploy to Netlify
       - name: 🚀 Deploy to Netlify
         if: steps.deployment-check.outputs.has_netlify == 'true'
-        uses: nwtgck/actions-netlify@v4.0
+        uses: nwtgck/actions-netlify@d22a32a27c918fe470bbc562e984f80ec48c2668
         with:
           publish-dir: './client/build'
           production-branch: main
@@ -116,7 +116,7 @@ jobs:
       # Option 3: Deploy to GitHub Pages (Fallback)
       - name: 🚀 Deploy to GitHub Pages
         if: steps.deployment-check.outputs.has_vercel == 'false' && steps.deployment-check.outputs.has_netlify == 'false' && steps.deployment-check.outputs.has_aws == 'false' && steps.deployment-check.outputs.has_firebase == 'false'
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./client/build
@@ -146,7 +146,7 @@ jobs:
       # Option 5: Deploy to Firebase Hosting
       - name: 🚀 Deploy to Firebase
         if: steps.deployment-check.outputs.has_firebase == 'true'
-        uses: FirebaseExtended/action-hosting-deploy@v0
+        uses: FirebaseExtended/action-hosting-deploy@500ac625ca2dd40cbd15f7659af953801858032a
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
@@ -187,7 +187,7 @@ jobs:
           echo "preview_url=$PREVIEW_URL" >> $GITHUB_OUTPUT
 
       - name: 💬 Comment on PR
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         with:
           script: |
             const previewUrl = '${{ steps.preview-url.outputs.preview_url }}';
@@ -301,7 +301,7 @@ jobs:
           AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION || 'us-east-1' }}
 
       - name: 💬 Comment Cleanup Complete
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         with:
           script: |
             const comment = `## 🧹 Preview Deployment Cleaned Up
