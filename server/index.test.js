@@ -26,6 +26,14 @@ describe('PR Approval Server', () => {
     });
   });
 
+  describe('Feedback escaping', () => {
+    test('should escape HTML-sensitive feedback characters', () => {
+      expect(app.escapeHtml('<script>alert("x")</script> &')).toBe(
+        '&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt; &amp;'
+      );
+    });
+  });
+
   describe('CORS and Basic Setup', () => {
     test('should have CORS headers', async () => {
       const response = await request(app).get('/health');
