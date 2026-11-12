@@ -17,11 +17,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+      with:
+        egress-policy: audit
+
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     
     - name: Use Node.js 18.x
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
       with:
         node-version: 18.x
         cache: 'npm'
@@ -46,13 +51,18 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+      with:
+        egress-policy: audit
+
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 0
     
     - name: Use Node.js 18.x
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
       with:
         node-version: 18.x
         cache: 'npm'
@@ -74,7 +84,7 @@ jobs:
     
     - name: Run TruffleHog OSS (PR)
       if: github.event_name == 'pull_request'
-      uses: trufflesecurity/trufflehog@main
+      uses: trufflesecurity/trufflehog@0344195435624238cd8184d3db0f8bf801882ff1 # main
       with:
         path: ./
         base: ${{ github.event.pull_request.base.sha }}
@@ -83,7 +93,7 @@ jobs:
     
     - name: Run TruffleHog OSS (Push)
       if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
-      uses: trufflesecurity/trufflehog@main
+      uses: trufflesecurity/trufflehog@0344195435624238cd8184d3db0f8bf801882ff1 # main
       with:
         path: ./
         base: ${{ github.event.before }}
@@ -93,7 +103,7 @@ jobs:
     
     - name: Run TruffleHog OSS (Full Scan)
       if: github.event_name == 'push' && github.event.before == '0000000000000000000000000000000000000000'
-      uses: trufflesecurity/trufflehog@main
+      uses: trufflesecurity/trufflehog@0344195435624238cd8184d3db0f8bf801882ff1 # main
       with:
         path: ./
         extra_args: --debug --only-verified
@@ -104,11 +114,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+      with:
+        egress-policy: audit
+
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     
     - name: Use Node.js 18.x
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
       with:
         node-version: 18.x
         cache: 'npm'
@@ -143,11 +158,16 @@ jobs:
         node-version: [18.x, 20.x, 22.x]
     
     steps:
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+      with:
+        egress-policy: audit
+
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
@@ -205,8 +225,13 @@ jobs:
     if: github.event_name == 'pull_request'
     
     steps:
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+      with:
+        egress-policy: audit
+
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     
     - name: Validate CODEOWNERS
       run: |
@@ -225,8 +250,13 @@ jobs:
     if: github.event_name == 'pull_request'
     
     steps:
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+      with:
+        egress-policy: audit
+
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     
     - name: Check PR title
       run: |
@@ -367,11 +397,16 @@ jobs:
     needs: [quality-checks]
     
     steps:
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+      with:
+        egress-policy: audit
+
     - name: Checkout code
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     
     - name: Use Node.js 18.x
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
       with:
         node-version: 18.x
         cache: 'npm'
@@ -406,6 +441,11 @@ jobs:
     if: always()
     
     steps:
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+      with:
+        egress-policy: audit
+
     - name: Check all jobs status
       run: |
         echo "Quality Checks: ${{ needs.quality-checks.result }}"
