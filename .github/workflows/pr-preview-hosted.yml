@@ -5,6 +5,11 @@ on:
     types: [opened, synchronize, reopened, closed]
     branches: [main, develop]
 
+# The branch name is attacker-controlled on a pull request. Steps read it from
+# the environment instead of having it pasted into their scripts.
+env:
+  HEAD_REF: ${{ github.head_ref }}
+
 jobs:
   # Deploy preview using GitHub-hosted runners
   deploy-preview:
@@ -85,7 +90,7 @@ jobs:
           # Fallback: construct URL from repository name
           if [ -z "$DEPLOYMENT_URL" ]; then
             REPO_NAME=$(echo ${{ github.repository }} | cut -d'/' -f2)
-            BRANCH_NAME=$(echo ${{ github.head_ref }} | sed 's/[^a-zA-Z0-9-]/-/g')
+            BRANCH_NAME=$(echo "$HEAD_REF" | sed 's/[^a-zA-Z0-9-]/-/g')
             USERNAME=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
             DEPLOYMENT_URL="https://${REPO_NAME}-git-${BRANCH_NAME}-${USERNAME}.vercel.app"
           fi
@@ -164,7 +169,7 @@ jobs:
             # If URL is empty or just "https://", construct fallback URL
             if [ -z "$PREVIEW_URL" ] || [ "$PREVIEW_URL" = "https://" ]; then
               REPO_NAME=$(echo ${{ github.repository }} | cut -d'/' -f2)
-              BRANCH_NAME=$(echo ${{ github.head_ref }} | sed 's/[^a-zA-Z0-9-]/-/g')
+              BRANCH_NAME=$(echo "$HEAD_REF" | sed 's/[^a-zA-Z0-9-]/-/g')
               USERNAME=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
               PREVIEW_URL="https://${REPO_NAME}-git-${BRANCH_NAME}-${USERNAME}.vercel.app"
               echo "Using fallback Vercel URL: $PREVIEW_URL"
@@ -201,7 +206,7 @@ jobs:
             
             ### 📊 Deployment Details
             - **PR Number**: #${{ github.event.number }}
-            - **Branch**: \`${{ github.head_ref }}\`
+            - **Branch**: \`${process.env.HEAD_REF}\`
             - **Commit**: \`${{ github.event.pull_request.head.sha }}\`
             - **Deployment**: GitHub-hosted runner
             
@@ -274,7 +279,7 @@ jobs:
           npm install -g vercel
           
           # Get branch name and construct deployment URL pattern
-          BRANCH_NAME=$(echo ${{ github.head_ref }} | sed 's/[^a-zA-Z0-9-]/-/g')
+          BRANCH_NAME=$(echo "$HEAD_REF" | sed 's/[^a-zA-Z0-9-]/-/g')
           REPO_NAME=$(echo ${{ github.repository }} | cut -d'/' -f2)
           
           # List deployments and find ones matching this branch
