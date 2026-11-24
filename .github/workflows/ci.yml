@@ -229,9 +229,12 @@ jobs:
       uses: actions/checkout@v7
     
     - name: Check PR title
+      # Untrusted values reach the script as environment variables, never as
+      # text pasted into it.
+      env:
+        PR_TITLE: ${{ github.event.pull_request.title }}
+        PR_AUTHOR: ${{ github.event.pull_request.user.login }}
       run: |
-        PR_TITLE="${{ github.event.pull_request.title }}"
-        PR_AUTHOR="${{ github.event.pull_request.user.login }}"
         
         echo "🔍 Checking PR title format..."
         echo "PR Title: $PR_TITLE"
@@ -347,9 +350,11 @@ jobs:
         fi
     
     - name: Check PR size
+      env:
+        BASE_REF: ${{ github.base_ref }}
       run: |
-        FILES_CHANGED=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | wc -l)
-        LINES_CHANGED=$(git diff --stat origin/${{ github.base_ref }}..HEAD | tail -1 | grep -o '[0-9]\+ insertions\|[0-9]\+ deletions' | grep -o '[0-9]\+' | paste -sd+ | bc)
+        FILES_CHANGED=$(git diff --name-only "origin/${BASE_REF}..HEAD" | wc -l)
+        LINES_CHANGED=$(git diff --stat "origin/${BASE_REF}..HEAD" | tail -1 | grep -o '[0-9]\+ insertions\|[0-9]\+ deletions' | grep -o '[0-9]\+' | paste -sd+ | bc)
         
         echo "Files changed: $FILES_CHANGED"
         echo "Lines changed: $LINES_CHANGED"
